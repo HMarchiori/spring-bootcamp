@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: spring-bootcamp
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring_bootcamp?useTimezone=true&serverTimezone=UTC
+    username: ${DB_USER}
+    password: ${DB_PW}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+      show-sql: false
