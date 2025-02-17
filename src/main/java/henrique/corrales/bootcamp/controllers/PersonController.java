@@ -5,8 +5,6 @@ import henrique.corrales.bootcamp.services.PersonServices;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -21,11 +19,7 @@ public class PersonController {
     @GetMapping(value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public PersonDTO findById(@PathVariable(value = "id") Long id) {
-        var person = service.findById(id);
-        person.setBirthDay(new Date());
-        person.setPhoneNumber("+55 (54) 99999-9999");
-        person.setSensitiveData("Sensitive Data");
-        return person;
+        return service.findById(id);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
