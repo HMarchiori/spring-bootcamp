@@ -1,11 +1,12 @@
 package henrique.corrales.bootcamp.controllers;
 
-import henrique.corrales.bootcamp.models.Person;
+import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.services.PersonServices;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -19,19 +20,27 @@ public class PersonController {
 
     @GetMapping(value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person findById(@PathVariable(value = "id") Long id) {return service.findById(id);}
+    public PersonDTO findById(@PathVariable(value = "id") Long id) {
+        var person = service.findById(id);
+        person.setBirthDay(new Date());
+        person.setPhoneNumber("+55 (54) 99999-9999");
+        person.setSensitiveData("Sensitive Data");
+        return person;
+    }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Person> findAll() {return service.findAll();}
+    public List<PersonDTO> findAll() {
+        return service.findAll();
+    }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Person create(@RequestBody Person person) {return service.create(person);
+    public PersonDTO create(@RequestBody PersonDTO person) {return service.create(person);
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             consumes =  MediaType.APPLICATION_JSON_VALUE)
-    public Person update(@RequestBody Person person) {
+    public PersonDTO update(@RequestBody PersonDTO person) {
         return service.update(person);
     }
 
