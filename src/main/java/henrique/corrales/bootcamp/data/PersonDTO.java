@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 
-@JsonPropertyOrder({"Identificação", "Nome", "Sobrenome", "Endereço", "Gênero"})
+@JsonPropertyOrder({"Identificação", "Nome", "Sobrenome", "Endereco", "Genero"})
 public class PersonDTO implements Serializable {
 
     @Serial
@@ -23,10 +23,10 @@ public class PersonDTO implements Serializable {
     @JsonProperty("Sobrenome")
     private String lastName;
 
-    @JsonProperty("Endereço")
+    @JsonProperty("Endereco")
     private String address;
 
-    @JsonProperty("Gênero")
+    @JsonProperty("Genero")
     private String gender;
 
     public PersonDTO() {
