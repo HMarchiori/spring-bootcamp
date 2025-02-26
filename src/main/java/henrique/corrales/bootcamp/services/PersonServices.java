@@ -2,6 +2,7 @@ package henrique.corrales.bootcamp.services;
 
 import henrique.corrales.bootcamp.controllers.PersonController;
 import henrique.corrales.bootcamp.data.PersonDTO;
+import henrique.corrales.bootcamp.exceptions.RequiredObjectIsNullException;
 import henrique.corrales.bootcamp.exceptions.ResourceNotFoundException;
 import henrique.corrales.bootcamp.mapper.custom.ObjectMapper;
 import henrique.corrales.bootcamp.models.Person;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +23,9 @@ public class PersonServices {
 
     private final Logger logger = LoggerFactory.getLogger(PersonServices.class.getName());
 
-    final
-    PersonRepository repository;
+    @Autowired
+    public PersonRepository repository;
 
-    public PersonServices(PersonRepository repository) {
-        this.repository = repository;
-    }
 
 
     public List<PersonDTO> findAll() {
@@ -49,6 +49,10 @@ public class PersonServices {
 
     public PersonDTO create(PersonDTO person) {
 
+        if (person == null) {
+            throw new RequiredObjectIsNullException("Required object is null.");
+        }
+
         logger.info("Creating one Person!");
         var entity = ObjectMapper.parseObject(person, Person.class);
 
@@ -58,6 +62,10 @@ public class PersonServices {
     }
 
     public PersonDTO update(PersonDTO person) {
+
+        if (person == null) {
+            throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
+        }
 
         logger.info("Updating one Person!");
         Person entity = repository.findById(person.getId())
