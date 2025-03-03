@@ -4,7 +4,7 @@ import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.exceptions.RequiredObjectIsNullException;
 import henrique.corrales.bootcamp.models.Person;
 import henrique.corrales.bootcamp.repositories.PersonRepository;
-import henrique.corrales.bootcamp.unitests.mapper.mocks.MockPerson;
+import henrique.corrales.bootcamp.unittests.mapper.mocks.MockPerson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

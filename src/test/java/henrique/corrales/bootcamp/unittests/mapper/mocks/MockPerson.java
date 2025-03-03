@@ -1,4 +1,4 @@
-package henrique.corrales.bootcamp.unitests.mapper.mocks;
+package henrique.corrales.bootcamp.unittests.mapper.mocks;
 
 import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.models.Person;

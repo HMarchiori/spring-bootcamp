@@ -1,8 +1,8 @@
-package henrique.corrales.bootcamp.unitests.mapper;
+package henrique.corrales.bootcamp.unittests.mapper;
 
 import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.models.Person;
-import henrique.corrales.bootcamp.unitests.mapper.mocks.MockPerson;
+import henrique.corrales.bootcamp.unittests.mapper.mocks.MockPerson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
