@@ -32,11 +32,8 @@ class PersonControllerTest extends AbstractIntegrationTest {
     private int port;
 
     private static RequestSpecification specification;
-    private static ObjectMapper mapper;
+    private static ObjectMapper objectMapper;
     private static PersonDTO person;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
@@ -90,10 +87,6 @@ class PersonControllerTest extends AbstractIntegrationTest {
         person.setLastName("Doe");
         person.setAddress("1234 Main St");
         person.setGender("Male");
-    }
-
-    @Test
-    void findById() {
     }
 
     @Test
