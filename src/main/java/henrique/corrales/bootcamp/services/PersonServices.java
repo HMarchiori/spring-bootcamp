@@ -10,60 +10,65 @@ import henrique.corrales.bootcamp.repositories.PersonRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class PersonServices {
 
-    private final Logger logger = LoggerFactory.getLogger(PersonServices.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(PersonServices.class);
+    private final PersonRepository repository;
+    private final PagedResourcesAssembler<PersonDTO> assembler;
 
     @Autowired
-    public PersonRepository repository;
+    public PersonServices(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler) {
+        this.repository = repository;
+        this.assembler = assembler;
+    }
 
-
-
-    public List<PersonDTO> findAll() {
-
+    public PagedModel<EntityModel<PersonDTO>> findAll(Pageable pageable) {
         logger.info("Finding all People!");
 
-        var persons = ObjectMapper.parseListObjects(repository.findAll(), PersonDTO.class);
-        persons.forEach(this::addHateoasLinks);
-        return persons;
+        Page<Person> people = repository.findAll(pageable);
+        return getPagedModel(people);
+    }
+
+    public PagedModel<EntityModel<PersonDTO>> findByName(String name, Pageable pageable) {
+        logger.info("Finding People by name!");
+
+        Page<Person> people = repository.findPeopleByName(name, pageable);
+        return getPagedModel(people);
     }
 
     public PersonDTO findById(Long id) {
         logger.info("Finding one Person!");
 
-        var entity = repository.findById(id)
+        Person entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        var dto = ObjectMapper.parseObject(entity, PersonDTO.class);
-        addHateoasLinks(dto);
-        return dto;
+        return convertToDtoWithLinks(entity);
     }
 
     public PersonDTO create(PersonDTO person) {
-
         if (person == null) {
             throw new RequiredObjectIsNullException("Required object is null.");
         }
 
         logger.info("Creating one Person!");
-        var entity = ObjectMapper.parseObject(person, Person.class);
-
-        var dto = ObjectMapper.parseObject(repository.save(entity), PersonDTO.class);
-        addHateoasLinks(dto);
-        return dto;
+        Person entity = ObjectMapper.parseObject(person, Person.class);
+        entity = repository.save(entity);
+        return convertToDtoWithLinks(entity);
     }
 
     public PersonDTO update(PersonDTO person) {
-
         if (person == null) {
             throw new RequiredObjectIsNullException("It is not allowed to persist a null object!");
         }
@@ -77,25 +82,21 @@ public class PersonServices {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        var dto = ObjectMapper.parseObject(repository.save(entity), PersonDTO.class);
-        addHateoasLinks(dto);
-        return dto;
+        entity = repository.save(entity);
+        return convertToDtoWithLinks(entity);
     }
 
     @Transactional
     public PersonDTO disablePerson(Long id) {
         logger.info("Disabling one Person!");
-        repository.findById(id)
+
+        Person entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
         repository.disablePerson(id);
-        var entity = repository.findById(id).get();
-        var dto = ObjectMapper.parseObject(entity, PersonDTO.class);
-        addHateoasLinks(dto);
-        return dto;
+        return convertToDtoWithLinks(entity);
     }
 
     public void delete(Long id) {
-
         logger.info("Deleting one Person!");
 
         Person entity = repository.findById(id)
@@ -103,13 +104,28 @@ public class PersonServices {
         repository.delete(entity);
     }
 
+    private PagedModel<EntityModel<PersonDTO>> getPagedModel(Page<Person> people) {
+        var peopleWithLinks = people.map(person -> {
+            PersonDTO dto = ObjectMapper.parseObject(person, PersonDTO.class);
+            addHateoasLinks(dto);
+            return dto;
+        });
+
+        return assembler.toModel(peopleWithLinks);
+    }
+
+    private PersonDTO convertToDtoWithLinks(Person entity) {
+        PersonDTO dto = ObjectMapper.parseObject(entity, PersonDTO.class);
+        addHateoasLinks(dto);
+        return dto;
+    }
+
     private void addHateoasLinks(PersonDTO dto) {
         dto.add(linkTo(methodOn(PersonController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(PersonController.class).findAll()).withRel("findall").withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).findAll(1, 12, "asc")).withRel("findall").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).create(dto)).withRel("create").withType("POST"));
         dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
         dto.add(linkTo(methodOn(PersonController.class).disablePerson(dto.getId())).withRel("disable").withType("PATCH"));
         dto.add(linkTo(methodOn(PersonController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
-
 }
