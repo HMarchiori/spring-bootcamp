@@ -1,7 +1,6 @@
-package henrique.corrales.bootcamp.data.wrappers;
+package henrique.corrales.bootcamp.data.wrappers.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import henrique.corrales.bootcamp.data.PersonDTO;
 
 import java.io.Serializable;
 

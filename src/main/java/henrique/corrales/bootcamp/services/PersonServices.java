@@ -90,9 +90,11 @@ public class PersonServices {
     public PersonDTO disablePerson(Long id) {
         logger.info("Disabling one Person!");
 
-        Person entity = repository.findById(id)
+        repository.disablePerson(id); // Atualiza no banco
+
+        Person entity = repository.findById(id) // Busca a entidade atualizada
                 .orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        repository.disablePerson(id);
+
         return convertToDtoWithLinks(entity);
     }
 

@@ -1,12 +1,13 @@
 package henrique.corrales.bootcamp.integrationtests.controllers.xml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import henrique.corrales.bootcamp.config.TestConfigs;
 import henrique.corrales.bootcamp.data.PersonDTO;
+import henrique.corrales.bootcamp.data.wrappers.json.WrapperPersonDTO;
+import henrique.corrales.bootcamp.data.wrappers.xml.PagedModelPerson;
 import henrique.corrales.bootcamp.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+
+import javax.management.modelmbean.XMLParseException;
 
 import java.util.List;
 
@@ -195,6 +198,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
 
         var content = given(specification)
                 .accept(MediaType.APPLICATION_XML_VALUE)
+                .queryParams("page", 3, "size", 12, "direction", "asc")
                 .when()
                 .get()
                 .then()
@@ -204,30 +208,65 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        List<PersonDTO> people = objectMapper.readValue(content, new TypeReference<List<PersonDTO>>() {
-        });
+        PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+        List<PersonDTO> people = wrapper.getContent();
 
-        PersonDTO personOne = people.get(0);
+        PersonDTO personOne = people.getFirst();
         person = personOne;
 
         assertNotNull(personOne.getId());
         assertTrue(personOne.getId() > 0);
 
-        assertEquals("Ayrton", personOne.getFirstName());
-        assertEquals("Senna", personOne.getLastName());
-        assertEquals("São Paulo - Brasil", personOne.getAddress());
+        assertEquals("Alyosha", personOne.getFirstName());
+        assertEquals("Waterman", personOne.getLastName());
+        assertEquals("Suite 35", personOne.getAddress());
         assertEquals("Male", personOne.getGender());
+        assertTrue(personOne.getEnabled());
 
-        PersonDTO personFive = people.get(4);
-        person = personFive;
+        PersonDTO personTwo = people.get(1);
+        person = personTwo;
 
-        assertNotNull(personFive.getId());
-        assertTrue(personFive.getId() > 0);
+        assertNotNull(personTwo.getId());
+        assertTrue(personTwo.getId() > 0);
 
-        assertEquals("Muhammad", personFive.getFirstName());
-        assertEquals("Ali", personFive.getLastName());
-        assertEquals("Kentucky - US", personFive.getAddress());
-        assertEquals("Male", personFive.getGender());
+        assertEquals("Alyssa", personTwo.getFirstName());
+        assertEquals("Notman", personTwo.getLastName());
+        assertEquals("PO Box 93622", personTwo.getAddress());
+        assertEquals("Female", personTwo.getGender());
+        assertTrue(personTwo.getEnabled());
+    }
+
+@Test
+    @Order(7)
+    void findByNameTest() throws JsonProcessingException {
+
+        var content = given(specification)
+                .accept(MediaType.APPLICATION_XML_VALUE)
+                .pathParam("firstName", "tes")
+                .queryParams("page", 0, "size", 10, "direction", "asc")
+                .when()
+                .get("findPeopleByName/{firstName}")
+                .then()
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_XML_VALUE)
+                .extract()
+                .body()
+                .asString();
+
+        PagedModelPerson wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+        List<PersonDTO> people = wrapper.getContent();
+
+        PersonDTO personOne = people.getFirst();
+        person = personOne;
+
+        assertNotNull(personOne.getId());
+        assertTrue(personOne.getId() > 0);
+
+        assertEquals("Gates", personOne.getFirstName());
+        assertEquals("Pudsey", personOne.getLastName());
+        assertEquals("Suite 84", personOne.getAddress());
+        assertEquals("Female", personOne.getGender());
+        assertFalse(personOne.getEnabled());
     }
 
 

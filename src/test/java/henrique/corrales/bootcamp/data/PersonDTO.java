@@ -8,6 +8,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 @XmlRootElement(name = "Person")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Relation(collectionRelation = "people")
 @JsonPropertyOrder({"Identificação", "Nome", "Sobrenome", "Endereco", "Genero", "Ligado", "links"})
 public class PersonDTO extends RepresentationModel<PersonDTO> implements Serializable {
 
