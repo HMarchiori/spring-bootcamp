@@ -1,5 +1,7 @@
 cors:
   originPatterns: http://localhost:8080,http://localhost:3000, https://www.erudio.com.br
+file:
+  upload-dir: /Documents/UploadDir
 spring:
   application:
     name: spring-bootcamp
@@ -14,10 +16,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-      show-sql: false
-      open-in-view: false
-  spring-doc:
-    paths-to-match: /api/**/v1/**
-
-
-
+        show-sql: false
+        open-in-view: false
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+logging:
+  level:
+    root: INFO
+spring-doc:
+  paths-to-match: /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
