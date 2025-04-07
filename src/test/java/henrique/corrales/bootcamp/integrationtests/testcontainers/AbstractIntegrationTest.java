@@ -18,7 +18,6 @@ public class AbstractIntegrationTest {
 
         static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:9.1.0");
 
-
         public static void startContainers() {
             Startables.deepStart(Stream.of(mysql)).join();
         }
@@ -27,8 +26,8 @@ public class AbstractIntegrationTest {
             return Map.of(
                     "spring.datasource.url", mysql.getJdbcUrl(),
                     "spring.datasource.username", mysql.getUsername(),
-                    "spring.datasource.password", mysql.getPassword()
-
+                    "spring.datasource.password", mysql.getPassword(),
+                    "spring.datasource.driver-class-name", "com.mysql.cj.jdbc.Driver"
             );
         }
 
@@ -36,9 +35,11 @@ public class AbstractIntegrationTest {
         public void initialize(ConfigurableApplicationContext applicationContext) {
             startContainers();
             ConfigurableEnvironment environment = applicationContext.getEnvironment();
-            MapPropertySource testContainers = new MapPropertySource("testcontainers", (Map)createConnectionConfiguration());
+            MapPropertySource testContainers = new MapPropertySource(
+                    "testcontainers",
+                    (Map) createConnectionConfiguration()
+            );
             environment.getPropertySources().addFirst(testContainers);
         }
-
     }
 }

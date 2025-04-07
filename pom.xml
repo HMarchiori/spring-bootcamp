@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.2</version>
         <relativePath/>
     </parent>
+
     <groupId>henrique.corrales</groupId>
     <artifactId>bootcamp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-bootcamp</name>
     <description>spring-bootcamp</description>
+
+    <!-- ✨ Centralização das versões: luxo, ordem e poder -->
     <properties>
         <java.version>23</java.version>
-        <dozer.version>7.0.0</dozer.version>
+
+        <!-- Frameworks -->
         <springdoc.version>2.7.0</springdoc.version>
-        <tc.version>1.20.4</tc.version>
+        <spring-hateoas.version>2.4.1</spring-hateoas.version>
+
+        <!-- Tools -->
+        <flyway.version>10.20.1</flyway.version>
+        <dozer.version>7.0.0</dozer.version>
+        <commons-compress.version>1.26.0</commons-compress.version>
+
+        <!-- Testing -->
+        <testcontainers.version>1.20.4</testcontainers.version>
         <rest-assured.version>5.5.1</rest-assured.version>
-        <cc.version>1.26.0</cc.version>
     </properties>
 
     <dependencies>
+        <!-- Spring Core -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>${cc.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -41,20 +49,22 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+            <version>${spring-hateoas.version}</version>
+        </dependency>
+
+        <!-- MySQL -->
+        <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
+        <!-- File Formats -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
-            <version>2.2.0</version>
         </dependency>
 
         <dependency>
@@ -63,6 +73,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>${commons-compress.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Flyway -->
+        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
@@ -70,21 +88,24 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
-            <version>10.20.1</version>
+            <version>${flyway.version}</version>
         </dependency>
 
+        <!-- OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
 
+        <!-- Mapeamento -->
         <dependency>
             <groupId>com.github.dozermapper</groupId>
             <artifactId>dozer-core</artifactId>
             <version>${dozer.version}</version>
         </dependency>
 
+        <!-- DevTools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -92,10 +113,11 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Testing -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
-            <version>${tc.version}</version>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -111,25 +133,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-hateoas</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-
+            <!-- Spring Boot Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Flyway Plugin -->
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>10.20.1</version>
+                <version>${flyway.version}</version>
                 <configuration>
                     <url>jdbc:mysql://localhost:3306/spring_bootcamp?useTimezone=true&amp;serverTimezone=UTC</url>
                     <!--suppress UnresolvedMavenProperty -->
@@ -138,7 +156,6 @@
                     <password>${db.password}</password>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
