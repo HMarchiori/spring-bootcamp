@@ -106,7 +106,7 @@ By completing this course, students will be able to:
 
 👤 Author
 
-Henrique
-Computer Science Undergraduate — PUCRS
-GitHub: [github.com/HMarchiori]
-Email: [hmarchiori@edu.pucrs.br]
+- Henrique Marchiori
+- Computer Science Undergraduate — PUCRS
+- GitHub: [github.com/HMarchiori]
+- Email: [h.marchiori@edu.pucrs.br]
