@@ -18,7 +18,6 @@
     <name>spring-bootcamp</name>
     <description>spring-bootcamp</description>
 
-    <!-- ✨ Centralização das versões: luxo, ordem e poder -->
     <properties>
         <java.version>23</java.version>
 
@@ -27,13 +26,17 @@
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
 
         <!-- Tools -->
-        <flyway.version>10.20.1</flyway.version>
+        <flyway.version>11.6.0</flyway.version>
         <dozer.version>7.0.0</dozer.version>
         <commons-compress.version>1.26.0</commons-compress.version>
 
         <!-- Testing -->
         <testcontainers.version>1.20.4</testcontainers.version>
         <rest-assured.version>5.5.1</rest-assured.version>
+        <mockito.version>5.2.0</mockito.version>
+
+        <!-- Segurança -->
+        <tomcat.version>10.1.35</tomcat.version>
     </properties>
 
     <dependencies>
@@ -41,6 +44,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
 
         <dependency>
@@ -52,6 +60,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
             <version>${spring-hateoas.version}</version>
+        </dependency>
+
+        <!-- Atualizações de segurança para Tomcat -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-el</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+            <version>${tomcat.version}</version>
         </dependency>
 
         <!-- MySQL -->
@@ -83,6 +108,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <dependency>
@@ -128,10 +154,25 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Mockito Inline (glamouroso e moderno) -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Boot Test (sem o core antigo do Mockito) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -158,4 +199,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
