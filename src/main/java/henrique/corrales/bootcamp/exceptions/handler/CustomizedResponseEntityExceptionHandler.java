@@ -1,9 +1,6 @@
 package henrique.corrales.bootcamp.exceptions.handler;
 
-import henrique.corrales.bootcamp.exceptions.FileNotFoundException;
-import henrique.corrales.bootcamp.exceptions.FileStorageException;
-import henrique.corrales.bootcamp.exceptions.RequiredObjectIsNullException;
-import henrique.corrales.bootcamp.exceptions.ResourceNotFoundException;
+import henrique.corrales.bootcamp.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,7 +34,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	}
 
 	@ExceptionHandler(RequiredObjectIsNullException.class)
-	public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
+	public final ResponseEntity<ExceptionResponse> handleRequiredObjectExceptions(Exception ex, WebRequest request) {
 		ExceptionResponse response = new ExceptionResponse(
 				new Date(),
 				ex.getMessage(),
@@ -56,6 +53,15 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
 	@ExceptionHandler(FileNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleFileNotExceptions(Exception ex, WebRequest request) {
+		ExceptionResponse response = new ExceptionResponse(
+				new Date(),
+				ex.getMessage(),
+				request.getDescription(false));
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(BadRequestException.class)
+	public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
 		ExceptionResponse response = new ExceptionResponse(
 				new Date(),
 				ex.getMessage(),
