@@ -103,3 +103,10 @@ By completing this course, students will be able to:
 - Generate professional reports using JasperReports ( ❌ Incomplete )
 
 ---
+
+👤 Author
+
+Henrique
+Computer Science Undergraduate — PUCRS
+GitHub: [github.com/HMarchiori]
+Email: [hmarchiori@edu.pucrs.br]
