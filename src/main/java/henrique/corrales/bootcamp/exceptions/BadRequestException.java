@@ -11,5 +11,7 @@ public class BadRequestException extends RuntimeException{
 		super("Unsupported file extension.");
 	}
 
+	public BadRequestException(String ex, Throwable cause) {super(ex, cause);}
+
 	private static final long serialVersionUID = 1L;
 }

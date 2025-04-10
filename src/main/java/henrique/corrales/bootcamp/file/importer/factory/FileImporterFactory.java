@@ -13,15 +13,17 @@ import org.springframework.stereotype.Component;
 public class FileImporterFactory {
 
     private final Logger logger = LoggerFactory.getLogger(FileImporterFactory.class);
-    private ApplicationContext context;
+    private final ApplicationContext context;
+
+    public FileImporterFactory(ApplicationContext context) {
+        this.context = context;
+    }
 
     public FileImporter getImporter(String fileName) {
         if (fileName.endsWith(".xlsx")) {
             return context.getBean(XlsxImporter.class);
-
         } else if (fileName.endsWith(".csv")) {
             return context.getBean(CsvImporter.class);
-
         } else {
             logger.error("Unsupported file type: {}", fileName);
             throw new BadRequestException();

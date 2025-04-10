@@ -4,7 +4,8 @@ import henrique.corrales.bootcamp.controllers.PersonController;
 import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.exceptions.RequiredObjectIsNullException;
 import henrique.corrales.bootcamp.exceptions.ResourceNotFoundException;
-import henrique.corrales.bootcamp.mapper.custom.ObjectMapper;
+import henrique.corrales.bootcamp.file.importer.contract.FileImporter;
+import henrique.corrales.bootcamp.file.importer.factory.FileImporterFactory;
 import henrique.corrales.bootcamp.models.Person;
 import henrique.corrales.bootcamp.repositories.PersonRepository;
 import jakarta.transaction.Transactional;
@@ -15,10 +16,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
+
+import static henrique.corrales.bootcamp.mapper.custom.ObjectMapper.parseObject;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -28,25 +36,50 @@ public class PersonServices {
     private final Logger logger = LoggerFactory.getLogger(PersonServices.class);
     private final PersonRepository repository;
     private final PagedResourcesAssembler<PersonDTO> assembler;
+    private final FileImporterFactory importer;
 
     @Autowired
-    public PersonServices(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler) {
+    public PersonServices(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler, FileImporterFactory importer) {
         this.repository = repository;
         this.assembler = assembler;
+        this.importer = importer;
     }
 
     public PagedModel<EntityModel<PersonDTO>> findAll(Pageable pageable) {
         logger.info("Finding all People!");
 
         Page<Person> people = repository.findAll(pageable);
-        return getPagedModel(people);
+        return getPagedModel(people, pageable);
     }
 
     public PagedModel<EntityModel<PersonDTO>> findByName(String name, Pageable pageable) {
         logger.info("Finding People by name!");
 
         Page<Person> people = repository.findPeopleByName(name, pageable);
-        return getPagedModel(people);
+        return getPagedModel(people, pageable);
+    }
+
+    public List<PersonDTO> massCreation(MultipartFile file) {
+        logger.info("Importing people from file!");
+
+        List<Person> entities;
+
+        try(InputStream stream = file.getInputStream()) {
+            String fileName = Optional.ofNullable(file.getOriginalFilename())
+                    .orElseThrow(RequiredObjectIsNullException::new);
+            FileImporter fileImporter = this.importer.getImporter(fileName);
+            entities = fileImporter.importFile(stream).stream()
+                    .map(personDTO -> repository.save(parseObject(personDTO, Person.class)))
+                    .toList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return entities.stream()
+                .map(entity -> {
+                    var dto = parseObject(entity, PersonDTO.class);
+                    addHateoasLinks(dto);
+                    return dto;
+                }).toList();
     }
 
     public PersonDTO findById(Long id) {
@@ -63,7 +96,7 @@ public class PersonServices {
         }
 
         logger.info("Creating one Person!");
-        Person entity = ObjectMapper.parseObject(person, Person.class);
+        Person entity = parseObject(person, Person.class);
         entity = repository.save(entity);
         return convertToDtoWithLinks(entity);
     }
@@ -106,18 +139,24 @@ public class PersonServices {
         repository.delete(entity);
     }
 
-    private PagedModel<EntityModel<PersonDTO>> getPagedModel(Page<Person> people) {
+    private PagedModel<EntityModel<PersonDTO>> getPagedModel(Page<Person> people, Pageable pageable) {
         var peopleWithLinks = people.map(person -> {
-            PersonDTO dto = ObjectMapper.parseObject(person, PersonDTO.class);
+            PersonDTO dto = parseObject(person, PersonDTO.class);
             addHateoasLinks(dto);
             return dto;
         });
 
-        return assembler.toModel(peopleWithLinks);
+        Link findAllLink = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(PersonController.class)
+                        .findAll(
+                                pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                String.valueOf(pageable.getSort()))).withSelfRel();
+        return assembler.toModel(peopleWithLinks, findAllLink);
     }
 
     private PersonDTO convertToDtoWithLinks(Person entity) {
-        PersonDTO dto = ObjectMapper.parseObject(entity, PersonDTO.class);
+        PersonDTO dto = parseObject(entity, PersonDTO.class);
         addHateoasLinks(dto);
         return dto;
     }
@@ -126,6 +165,8 @@ public class PersonServices {
         dto.add(linkTo(methodOn(PersonController.class).findById(dto.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).findAll(1, 12, "asc")).withRel("findall").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(PersonController.class)).slash("massCreation").withRel("massCreation").withType("POST"));
+        dto.add(linkTo(methodOn(PersonController.class).findByName(dto.getFirstName(), 1, 12, "asc")).withRel("findByName").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
         dto.add(linkTo(methodOn(PersonController.class).disablePerson(dto.getId())).withRel("disable").withType("PATCH"));
         dto.add(linkTo(methodOn(PersonController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
