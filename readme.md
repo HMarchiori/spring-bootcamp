@@ -41,7 +41,7 @@ The course can be found at [Udemy](https://www.udemy.com/course/restful-apis-do-
 | 19 | PATCH Verb                | ✔️ Complete |
 | 20 | Query Params & Pagination | ✔️ Complete |
 | 21 | File Upload/Download      | ✔️ Complete |
-| 22 | Excel/CSV                 | ❌ Incomplete|
+| 22 | Excel/CSV                 | ✔️ Complete |
 | 23 | JasperReports             | ❌ Incomplete |
 | 24 | Spring Mail               | ❌ Incomplete |
 | 25 | JWT Auth                  | ❌ Incomplete |
