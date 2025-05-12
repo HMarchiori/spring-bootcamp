@@ -33,16 +33,16 @@ The course can be found at [Udemy](https://www.udemy.com/course/restful-apis-do-
 
 ### 🚀 Advanced Features
 
-| Section | Topic                     | Status |
-|--------|---------------------------|--------|
-| 16 | Docker                    | ✔️ Complete |
-| 17 | TestContainers            | ✔️ Complete |
-| 18 | CORS                      | ✔️ Complete |
-| 19 | PATCH Verb                | ✔️ Complete |
-| 20 | Query Params & Pagination | ✔️ Complete |
-| 21 | File Upload/Download      | ✔️ Complete |
-| 22 | Excel/CSV                 | ❌ Incomplete|
-| 23 | JasperReports             | ❌ Incomplete |
+| Section | Topic                     | Status       |
+|--------|---------------------------|--------------|
+| 16 | Docker                    | ✔️ Complete  |
+| 17 | TestContainers            | ✔️ Complete  |
+| 18 | CORS                      | ✔️ Complete  |
+| 19 | PATCH Verb                | ✔️ Complete  |
+| 20 | Query Params & Pagination | ✔️ Complete  |
+| 21 | File Upload/Download      | ✔️ Complete  |
+| 22 | Excel/CSV                 | ✔️ Complete  |
+| 23 | JasperReports             | ❌ Skipped    |
 | 24 | Spring Mail               | ❌ Incomplete |
 | 25 | JWT Auth                  | ❌ Incomplete |
 | 26 | API Security Testing      | ❌ Incomplete |
@@ -50,6 +50,8 @@ The course can be found at [Udemy](https://www.udemy.com/course/restful-apis-do-
 | 28 | Dockerized App            | ❌ Incomplete |
 | 29 | AWS Deployment            | ❌ Incomplete |
 | 30 | GitHub Actions            | ❌ Incomplete |
+
+Could not create an account for Jasper, waiting for admin response.
 
 ---
 

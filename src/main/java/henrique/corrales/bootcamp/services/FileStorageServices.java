@@ -45,7 +45,7 @@ public class FileStorageServices {
 
         try {
             if (fileName.contains("..")) {
-                logger.error("Sorry! Filename Contains a Invalid path Sequence " + fileName);
+                logger.error("Sorry! Filename Contains a Invalid path Sequence {}", fileName);
                 throw new FileStorageException("Sorry! Filename Contains a Invalid path Sequence " + fileName);
             }
 
@@ -55,7 +55,7 @@ public class FileStorageServices {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (Exception e) {
-            logger.error("Could not store file " + fileName + ". Please try Again!");
+            logger.error("Could not store file {}. Please try Again!", fileName);
             throw new FileStorageException("Could not store file " + fileName + ". Please try Again!", e);
         }
     }
@@ -67,11 +67,11 @@ public class FileStorageServices {
             if (resource.exists()) {
                 return resource;
             } else {
-                logger.error("File not found " + fileName);
+                logger.error("File not found: {}", fileName);
                 throw new FileNotFoundException("File not found " + fileName);
             }
         } catch (Exception e) {
-            logger.error("File not found " + fileName);
+            logger.error("File not found {}", fileName);
             throw new FileNotFoundException("File not found " + fileName, e);
         }
     }

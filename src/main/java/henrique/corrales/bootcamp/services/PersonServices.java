@@ -4,6 +4,8 @@ import henrique.corrales.bootcamp.controllers.PersonController;
 import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.exceptions.RequiredObjectIsNullException;
 import henrique.corrales.bootcamp.exceptions.ResourceNotFoundException;
+import henrique.corrales.bootcamp.file.exporter.contract.FileExporter;
+import henrique.corrales.bootcamp.file.exporter.factory.FileExporterFactory;
 import henrique.corrales.bootcamp.file.importer.contract.FileImporter;
 import henrique.corrales.bootcamp.file.importer.factory.FileImporterFactory;
 import henrique.corrales.bootcamp.models.Person;
@@ -12,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -37,12 +40,14 @@ public class PersonServices {
     private final PersonRepository repository;
     private final PagedResourcesAssembler<PersonDTO> assembler;
     private final FileImporterFactory importer;
+    private final FileExporterFactory exporter;
 
     @Autowired
-    public PersonServices(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler, FileImporterFactory importer) {
+    public PersonServices(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler, FileExporterFactory exporter, FileImporterFactory importer) {
         this.repository = repository;
         this.assembler = assembler;
         this.importer = importer;
+        this.exporter = exporter;
     }
 
     public PagedModel<EntityModel<PersonDTO>> findAll(Pageable pageable) {
@@ -50,6 +55,21 @@ public class PersonServices {
 
         Page<Person> people = repository.findAll(pageable);
         return getPagedModel(people, pageable);
+    }
+
+    public Resource exportPage(Pageable pageable, String acceptHeader) {
+        logger.info("Exporting a People page!");
+
+        var people = repository.findAll(pageable)
+                .map(person -> parseObject(person, PersonDTO.class))
+                .getContent();
+
+        try {
+            FileExporter exporter = this.exporter.getExporter(acceptHeader);
+            return exporter.exportFile(people);
+        } catch (Exception e) {
+            throw new RuntimeException("Export failure",e);
+        }
     }
 
     public PagedModel<EntityModel<PersonDTO>> findByName(String name, Pageable pageable) {
@@ -170,5 +190,12 @@ public class PersonServices {
         dto.add(linkTo(methodOn(PersonController.class).update(dto)).withRel("update").withType("PUT"));
         dto.add(linkTo(methodOn(PersonController.class).disablePerson(dto.getId())).withRel("disable").withType("PATCH"));
         dto.add(linkTo(methodOn(PersonController.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
+        dto.add(linkTo(methodOn(PersonController.class)
+                .exportPage(
+                        1, 12, "asc", null))
+                .withRel("exportPage")
+                .withType("GET")
+                .withTitle("Export People")
+        );
     }
 }

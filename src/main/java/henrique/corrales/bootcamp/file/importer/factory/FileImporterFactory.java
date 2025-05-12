@@ -26,7 +26,7 @@ public class FileImporterFactory {
             return context.getBean(CsvImporter.class);
         } else {
             logger.error("Unsupported file type: {}", fileName);
-            throw new BadRequestException();
+            throw new BadRequestException("Invalid File Format!");
         }
     }
 }
