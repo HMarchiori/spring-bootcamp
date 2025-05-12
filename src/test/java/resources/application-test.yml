@@ -28,12 +28,9 @@ spring:
     username: ${GMAIL_USER}
     password: ${GMAIL_PW}
     properties:
-      mail:
-        smtp:
-        auth: true
-        starttls:
-          enabled: true
-          required: true
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
   servlet:
     multipart:
       enabled: true
