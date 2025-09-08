@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import henrique.corrales.bootcamp.config.EmailConfig;
 import henrique.corrales.bootcamp.data.request.EmailRequestDTO;
 import henrique.corrales.bootcamp.mail.EmailSender;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +14,14 @@ import java.io.IOException;
 @Service
 public class EmailService {
 
-    @Autowired
-    private EmailConfig emailConfig;
+    private final EmailConfig emailConfig;
 
-    @Autowired
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
+
+    public EmailService(EmailConfig emailConfig, EmailSender emailSender) {
+        this.emailConfig = emailConfig;
+        this.emailSender = emailSender;
+    }
 
     public void sendSimpleEmail(EmailRequestDTO emailRequest) {
         emailSender
