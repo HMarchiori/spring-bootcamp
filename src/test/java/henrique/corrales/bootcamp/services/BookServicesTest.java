@@ -44,7 +44,6 @@ class BookServicesTest {
     @Mock
     BookRepository repository;
 
-
     @Mock
     PagedResourcesAssembler<BookDTO> assembler;
 
