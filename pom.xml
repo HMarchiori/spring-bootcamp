@@ -34,8 +34,9 @@
 
         <!-- Para o plugin do Flyway puxar das env vars -->
         <!--suppress UnresolvedMavenProperty -->
-        <db.user>${DB_USER}</db.user>
-        <db.password>$DB_PW}</db.password>
+        <user>${env.DB_USER}</user>
+        <!--suppress UnresolvedMavenProperty -->
+        <password>${env.DB_PW}</password>
     </properties>
 
     <dependencies>
