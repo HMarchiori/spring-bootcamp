@@ -23,7 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Service
 public class BookServices {
 
-    private Logger logger = LoggerFactory.getLogger(BookServices.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(BookServices.class.getName());
 
     final
     BookRepository repository;

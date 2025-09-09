@@ -4,7 +4,7 @@ import henrique.corrales.bootcamp.controllers.PersonController;
 import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.exceptions.RequiredObjectIsNullException;
 import henrique.corrales.bootcamp.exceptions.ResourceNotFoundException;
-import henrique.corrales.bootcamp.file.exporter.contract.FileExporter;
+import henrique.corrales.bootcamp.file.exporter.contract.PersonExporter;
 import henrique.corrales.bootcamp.file.exporter.factory.FileExporterFactory;
 import henrique.corrales.bootcamp.file.importer.contract.FileImporter;
 import henrique.corrales.bootcamp.file.importer.factory.FileImporterFactory;
@@ -65,8 +65,8 @@ public class PersonServices {
                 .getContent();
 
         try {
-            FileExporter exporter = this.exporter.getExporter(acceptHeader);
-            return exporter.exportFile(people);
+            PersonExporter exporter = this.exporter.getExporter(acceptHeader);
+            return exporter.exportPeople(people);
         } catch (Exception e) {
             throw new RuntimeException("Export failure",e);
         }
@@ -183,7 +183,7 @@ public class PersonServices {
 
     private void addHateoasLinks(PersonDTO dto) {
         dto.add(linkTo(methodOn(PersonController.class).findById(dto.getId())).withSelfRel().withType("GET"));
-        dto.add(linkTo(methodOn(PersonController.class).findAll(1, 12, "asc")).withRel("findall").withType("GET"));
+        dto.add(linkTo(methodOn(PersonController.class).findAll(1, 12, "asc")).withRel("findAll").withType("GET"));
         dto.add(linkTo(methodOn(PersonController.class).create(dto)).withRel("create").withType("POST"));
         dto.add(linkTo(methodOn(PersonController.class)).slash("massCreation").withRel("massCreation").withType("POST"));
         dto.add(linkTo(methodOn(PersonController.class).findByName(dto.getFirstName(), 1, 12, "asc")).withRel("findByName").withType("GET"));
