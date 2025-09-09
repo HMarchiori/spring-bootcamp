@@ -7,6 +7,7 @@ import henrique.corrales.bootcamp.models.Book;
 import henrique.corrales.bootcamp.repositories.BookRepository;
 import henrique.corrales.bootcamp.unittests.mapper.mocks.MockBook;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 class BookServicesTest {

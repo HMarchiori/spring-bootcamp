@@ -23,7 +23,7 @@
 
         <!-- Libs que não são gerenciadas pelo BOM do Spring Boot -->
         <springdoc.version>2.7.0</springdoc.version>
-        <flyway.version>11.6.0</flyway.version>
+        <flyway.version>11.11.0</flyway.version>
         <dozer.version>7.0.0</dozer.version>
         <apache-commons.version>1.12.0</apache-commons.version>
         <commons-compress.version>1.26.0</commons-compress.version>
@@ -32,7 +32,6 @@
         <rest-assured.version>5.5.1</rest-assured.version>
         <mockito.version>5.2.0</mockito.version>
 
-        <!-- Para o plugin do Flyway puxar das env vars -->
         <!--suppress UnresolvedMavenProperty -->
         <user>${env.DB_USER}</user>
         <!--suppress UnresolvedMavenProperty -->
@@ -199,8 +198,10 @@
                 <version>${flyway.version}</version>
                 <configuration>
                     <url>jdbc:mysql://localhost:3306/spring_bootcamp?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</url>
-                    <user>${db.user}</user>
-                    <password>${db.password}</password>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <user>${env.DB_USER}</user>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <password>${env.DB_PW}</password>
                 </configuration>
             </plugin>
         </plugins>
