@@ -34,16 +34,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class PersonServices {
+public class PersonService {
 
-    private final Logger logger = LoggerFactory.getLogger(PersonServices.class);
+    private final Logger logger = LoggerFactory.getLogger(PersonService.class);
     private final PersonRepository repository;
     private final PagedResourcesAssembler<PersonDTO> assembler;
     private final FileImporterFactory importer;
     private final FileExporterFactory exporter;
 
     @Autowired
-    public PersonServices(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler, FileExporterFactory exporter, FileImporterFactory importer) {
+    public PersonService(PersonRepository repository, PagedResourcesAssembler<PersonDTO> assembler, FileExporterFactory exporter, FileImporterFactory importer) {
         this.repository = repository;
         this.assembler = assembler;
         this.importer = importer;

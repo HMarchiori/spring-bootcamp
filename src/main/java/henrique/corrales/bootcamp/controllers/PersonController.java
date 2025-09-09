@@ -3,7 +3,7 @@ package henrique.corrales.bootcamp.controllers;
 import henrique.corrales.bootcamp.controllers.docs.PersonControllerDocs;
 import henrique.corrales.bootcamp.data.PersonDTO;
 import henrique.corrales.bootcamp.file.exporter.MediaTypes;
-import henrique.corrales.bootcamp.services.PersonServices;
+import henrique.corrales.bootcamp.services.PersonService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
@@ -26,9 +26,9 @@ import java.util.List;
 @RequestMapping("/api/person/v1")
 @Tag(name = "People", description = "Endpoints for person management")
 public class PersonController implements PersonControllerDocs {
-    private final PersonServices service;
+    private final PersonService service;
 
-    public PersonController(PersonServices service) {
+    public PersonController(PersonService service) {
         this.service = service;
     }
 

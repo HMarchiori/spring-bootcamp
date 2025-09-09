@@ -21,9 +21,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class BookServices {
+public class BookService {
 
-    private final Logger logger = LoggerFactory.getLogger(BookServices.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(BookService.class.getName());
 
     final
     BookRepository repository;
@@ -31,7 +31,7 @@ public class BookServices {
     final
     PagedResourcesAssembler<BookDTO> assembler;
 
-    public BookServices(BookRepository repository, PagedResourcesAssembler<BookDTO> assembler) {
+    public BookService(BookRepository repository, PagedResourcesAssembler<BookDTO> assembler) {
         this.repository = repository;
         this.assembler = assembler;
     }
@@ -55,7 +55,8 @@ public class BookServices {
                                         pageable.getPageSize(),
                                         String.valueOf(pageable.getSort())))
                 .withSelfRel();
-        return assembler.toModel(booksWithLinks, findAllLink);
+        return assembler.toModel(booksWithLinks,
+                findAllLink);
     }
 
     public BookDTO findById(Long id) {

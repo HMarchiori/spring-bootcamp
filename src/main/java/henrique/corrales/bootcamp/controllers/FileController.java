@@ -2,7 +2,7 @@ package henrique.corrales.bootcamp.controllers;
 
 import henrique.corrales.bootcamp.controllers.docs.FileControllerDocs;
 import henrique.corrales.bootcamp.data.UploadFileResponseDTO;
-import henrique.corrales.bootcamp.services.FileStorageServices;
+import henrique.corrales.bootcamp.services.FileStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ public class FileController implements FileControllerDocs {
 
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
-    private final FileStorageServices service;
+    private final FileStorageService service;
 
-    public FileController(FileStorageServices service) {
+    public FileController(FileStorageService service) {
         this.service = service;
     }
 

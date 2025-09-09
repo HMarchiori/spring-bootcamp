@@ -37,12 +37,12 @@ import static org.mockito.Mockito.*;
 @Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-class PersonServicesTest {
+class PersonServiceTest {
 
     private MockPerson input;
 
     @InjectMocks
-    private PersonServices service;
+    private PersonService service;
 
     @Mock
     private PersonRepository repository;

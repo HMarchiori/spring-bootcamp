@@ -1,0 +1,26 @@
+package henrique.corrales.bootcamp.services;
+
+import henrique.corrales.bootcamp.repositories.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+public class UserService implements UserDetailsService {
+
+
+    private final UserRepository repository;
+
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var result = repository.findByUsername(username);
+        if (result != null) {
+            return result;
+        }
+        throw new UsernameNotFoundException("Username " + username + " not found");
+    }
+
+}

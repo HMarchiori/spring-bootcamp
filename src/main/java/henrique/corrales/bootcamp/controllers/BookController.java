@@ -2,7 +2,7 @@ package henrique.corrales.bootcamp.controllers;
 
 import henrique.corrales.bootcamp.controllers.docs.BookControllerDocs;
 import henrique.corrales.bootcamp.data.BookDTO;
-import henrique.corrales.bootcamp.services.BookServices;
+import henrique.corrales.bootcamp.services.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookController implements BookControllerDocs {
 
     @Autowired
-    private BookServices service;
+    private BookService service;
 
     @GetMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE,

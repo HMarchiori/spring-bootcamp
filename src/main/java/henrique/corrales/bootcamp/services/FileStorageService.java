@@ -19,14 +19,14 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 @Service
-public class FileStorageServices {
+public class FileStorageService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileStorageServices.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileStorageService.class);
 
     private final Path fileStorageLocation;
 
     @Autowired
-    public FileStorageServices(FileStorageConfig fileStorageConfig) {
+    public FileStorageService(FileStorageConfig fileStorageConfig) {
 
         this.fileStorageLocation = Paths.get(fileStorageConfig.getUploadDir()).toAbsolutePath()
                 .toAbsolutePath().normalize();
