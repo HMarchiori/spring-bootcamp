@@ -13,6 +13,7 @@ public class AccountCredentialsDTO  implements Serializable {
     private String password;
     public AccountCredentialsDTO() {}
 
+
     public String getUsername() {
         return username;
     }
