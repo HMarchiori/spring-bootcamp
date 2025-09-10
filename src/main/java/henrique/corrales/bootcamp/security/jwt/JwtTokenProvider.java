@@ -1,9 +1,9 @@
 package henrique.corrales.bootcamp.security.jwt;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import henrique.corrales.bootcamp.data.security.TokenDTO;
 import henrique.corrales.bootcamp.exceptions.InvalidJwtAuthenticationException;
 import jakarta.annotation.PostConstruct;
@@ -17,24 +17,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class JwtTokenProvider {
 
-
     @Value("${security.jwt.token.secret-key:secret}")
     private String secretKey = "secret";
 
-    @Value("${security.jwt.token.expire-lenght:3600000}")
+    @Value("${security.jwt.token.expire-length:3600000}") // <-- corrigido
     private long validityInMilliseconds = 3600000; // 1h
 
-
     private final UserDetailsService userDetailsService;
-
-    Algorithm algorithm = null;
+    private Algorithm algorithm;
 
     public JwtTokenProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -42,8 +38,10 @@ public class JwtTokenProvider {
 
     @PostConstruct
     protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        algorithm = Algorithm.HMAC256(secretKey.getBytes());
+        // Escolha UM padrão e mantenha. Aqui vou usar direto o segredo cru — simples e consistente.
+        // Se quiser Base64, então NÃO re-base64-ize em outro lugar.
+        // secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        algorithm = Algorithm.HMAC256(secretKey); // usa a String (lib aceita), consistente everywhere
     }
 
     public TokenDTO createAccessToken(String username, List<String> roles) {
@@ -55,14 +53,11 @@ public class JwtTokenProvider {
     }
 
     public TokenDTO refreshToken(String refreshToken) {
-        var token = "";
-        if(refreshTokenContainsBearer(refreshToken)) {
-            token = refreshToken.substring("Bearer ".length());
-        }
+        String token = refreshTokenContainsBearer(refreshToken)
+                ? refreshToken.substring("Bearer ".length()).trim()
+                : StringUtils.defaultString(refreshToken);
 
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-
+        DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
         String username = decodedJWT.getSubject();
         List<String> roles = decodedJWT.getClaim("roles").asList(String.class);
         return createAccessToken(username, roles);
@@ -79,7 +74,6 @@ public class JwtTokenProvider {
     }
 
     private String getAccessToken(String username, List<String> roles, Date now, Date validity) {
-
         String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         return JWT.create()
                 .withClaim("roles", roles)
@@ -92,23 +86,21 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         DecodedJWT decodedJWT = decodedToken(token);
-        UserDetails userDetails = this.userDetailsService
-                .loadUserByUsername(decodedJWT.getSubject());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(decodedJWT.getSubject());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     private DecodedJWT decodedToken(String token) {
-        Algorithm alg = Algorithm.HMAC256(secretKey.getBytes());
-        JWTVerifier verifier = JWT.require(alg).build();
+        // Reusa o MESMO algorithm — 一把钥匙开一把锁
+        JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);
     }
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
-        //Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZWFuZHJvIiwicm9sZXMiOlsiQURNSU4iLCJNQU5BR0VSIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImV4cCI6MTY1MjcxOTUzOCwiaWF0IjoxNjUyNzE1OTM4fQ.muu8eStsRobqLyrFYLHRiEvOSHAcss4ohSNtmwWTRcY
-        if(refreshTokenContainsBearer(bearerToken)) return bearerToken.substring("Bearer ".length());
-        return null;
+        if (StringUtils.isBlank(bearerToken) || !bearerToken.startsWith("Bearer ")) return null;
+        String token = bearerToken.substring("Bearer ".length()).trim();
+        return token.isEmpty() ? null : token;
     }
 
     private static boolean refreshTokenContainsBearer(String refreshToken) {
@@ -116,9 +108,10 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token){
-        DecodedJWT decodedJWT = decodedToken(token);
         try {
-            return !decodedJWT.getExpiresAt().before(new Date());
+            DecodedJWT decodedJWT = decodedToken(token);
+            Date exp = decodedJWT.getExpiresAt();
+            return exp == null || exp.after(new Date());
         } catch (Exception e) {
             throw new InvalidJwtAuthenticationException("Expired or Invalid JWT Token!");
         }
