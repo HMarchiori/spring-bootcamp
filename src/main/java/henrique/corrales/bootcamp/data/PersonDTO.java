@@ -1,40 +1,37 @@
 package henrique.corrales.bootcamp.data;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-@Relation(collectionRelation = "people")
-@JsonPropertyOrder({"Identificação", "Nome", "Sobrenome", "Endereco", "Genero", "Ligado"})
+
 public class PersonDTO extends RepresentationModel<PersonDTO> implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-
-    @JsonProperty("Identificação")
+    @JsonProperty("Identificação") @JsonAlias({"id", "Id"})
     private Long id;
 
-    @JsonProperty("Nome")
+    @JsonProperty("Nome") @JsonAlias({"firstName", "FirstName"})
     private String firstName;
 
-    @JsonProperty("Sobrenome")
+    @JsonProperty("Sobrenome") @JsonAlias({"lastName", "LastName"})
     private String lastName;
 
-    @JsonProperty("Endereco")
+    @JsonProperty("Endereco") @JsonAlias({"address", "Address", "endereco"})
     private String address;
 
-    @JsonProperty("Genero")
+    @JsonProperty("Genero") @JsonAlias({"gender", "Gender", "genero"})
     private String gender;
 
-    @JsonProperty("Ligado")
+    @JsonProperty("Ligado") @JsonAlias({"enabled", "Enabled"})
     private Boolean enabled;
 
-    public PersonDTO() {
-    }
+    @JsonAlias({"profileUrl", "profile_url"})
+    private String profileUrl;
+
+    @JsonAlias({"photoUrl", "photo_url"})
+    private String photoUrl;
 
     public Long getId() {
         return id;
@@ -84,17 +81,32 @@ public class PersonDTO extends RepresentationModel<PersonDTO> implements Seriali
         this.enabled = enabled;
     }
 
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public void setProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         PersonDTO personDTO = (PersonDTO) o;
-        return Objects.equals(id, personDTO.id) && Objects.equals(firstName, personDTO.firstName) && Objects.equals(lastName, personDTO.lastName) && Objects.equals(address, personDTO.address) && Objects.equals(gender, personDTO.gender) && Objects.equals(enabled, personDTO.enabled);
+        return Objects.equals(id, personDTO.id) && Objects.equals(firstName, personDTO.firstName) && Objects.equals(lastName, personDTO.lastName) && Objects.equals(address, personDTO.address) && Objects.equals(gender, personDTO.gender) && Objects.equals(enabled, personDTO.enabled) && Objects.equals(profileUrl, personDTO.profileUrl) && Objects.equals(photoUrl, personDTO.photoUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, firstName, lastName, address, gender, enabled);
+        return Objects.hash(super.hashCode(), id, firstName, lastName, address, gender, enabled, profileUrl, photoUrl);
     }
 }
-
