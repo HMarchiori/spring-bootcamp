@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface AuthControllerDocs {
 
@@ -47,5 +48,5 @@ public interface AuthControllerDocs {
                     @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
             }
     )
-    AccountCredentialsDTO create(AccountCredentialsDTO credentials);
+    ResponseEntity<?> create(@RequestBody AccountCredentialsDTO credentials);
 }

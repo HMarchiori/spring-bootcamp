@@ -16,7 +16,9 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
-    public AuthService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+    public AuthService(AuthenticationManager authenticationManager,
+                       JwtTokenProvider jwtTokenProvider,
+                       UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
@@ -24,7 +26,9 @@ public class AuthService {
 
     public TokenDTO signIn(AccountCredentialsDTO credentials) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        credentials.getUsername(), credentials.getPassword()
+                )
         );
 
         var user = userRepository.findByUsername(credentials.getUsername());
@@ -33,8 +37,10 @@ public class AuthService {
         return jwtTokenProvider.createAccessToken(credentials.getUsername(), user.getRoles());
     }
 
-    public Object refreshToken(String username, String refreshToken) {
-        return null;
+    public TokenDTO refreshToken(String username, String authorizationHeader) {
+        var user = userRepository.findByUsername(username);
+        if (user == null) throw new UsernameNotFoundException("Username " + username + " not found!");
+        return jwtTokenProvider.refreshToken(authorizationHeader); // aceita "Bearer <token>"
     }
 
     public AccountCredentialsDTO create(AccountCredentialsDTO credentials) {
