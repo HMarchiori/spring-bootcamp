@@ -1,10 +1,17 @@
 package henrique.corrales.bootcamp.security.jwt;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import henrique.corrales.bootcamp.data.security.TokenDTO;
+import henrique.corrales.bootcamp.exceptions.InvalidJwtAuthenticationException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -64,6 +71,38 @@ public class JwtTokenProvider {
                 .withSubject(username)
                 .withIssuer(issuerUrl)
                 .sign(algorithm);
+    }
+
+    public Authentication getAuthentication(String token) {
+        DecodedJWT decodedJWT = decodedToken(token);
+        UserDetails userDetails = this.userDetailsService
+                .loadUserByUsername(decodedJWT.getSubject());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    private DecodedJWT decodedToken(String token) {
+        Algorithm algo = Algorithm.HMAC256(secretKey.getBytes());
+        JWTVerifier verifier = JWT.require(algo).build();
+        return verifier.verify(token);
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        // vamos remover o Bearer do Token
+        if ( bearerToken.isEmpty() || bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring("Bearer ".length());
+        } else {
+            throw new InvalidJwtAuthenticationException("Invalid JWT Token");
+        }
+    }
+
+    public boolean ValidateToken(String token) {
+        DecodedJWT decodedJWT = decodedToken(token);
+        try {
+            return !decodedJWT.getExpiresAt().before(new Date());
+        } catch (Exception e) {
+            throw new InvalidJwtAuthenticationException("Invalid JWT Token");
+        }
     }
 
 }
